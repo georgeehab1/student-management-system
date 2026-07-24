@@ -25,10 +25,34 @@ const AddStudent = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
+    // --- VALIDATION START ---
+    
+    // 1. Validate Email using a Regular Expression
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address (e.g., student@university.edu).');
+      return; // Stop the function here so it doesn't send the bad data
+    }
+
+    // 2. Validate Student ID (e.g., must be at least 3 characters)
+    if (formData.studentId.trim().length < 3) {
+      setError('Student ID must be at least 3 characters long.');
+      return;
+    }
+
+    // 3. Validate Major (prevent empty spaces)
+    if (formData.major.trim().length === 0) {
+      setError('Major cannot be empty.');
+      return;
+    }
+    
+    // --- VALIDATION END ---
+
+    // If all validation passes, proceed with the API call
     try {
       const response = await fetch('http://localhost:5000/api/students', {
         method: 'POST',
@@ -44,7 +68,6 @@ const AddStudent = () => {
         throw new Error(data.message || 'Failed to add student');
       }
 
-      // If successful, navigate back to the student list
       navigate('/');
     } catch (err) {
       setError(err.message);

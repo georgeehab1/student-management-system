@@ -54,6 +54,29 @@ const EditStudent = () => {
     e.preventDefault();
     setError(null);
 
+    // --- VALIDATION START ---
+    
+    // 1. Validate Email using a Regular Expression
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address (e.g., student@university.edu).');
+      return; // Stop the function here so it doesn't send the bad data
+    }
+
+    // 2. Validate Student ID (e.g., must be at least 3 characters)
+    if (formData.studentId.trim().length < 3) {
+      setError('Student ID must be at least 3 characters long.');
+      return;
+    }
+
+    // 3. Validate Major (prevent empty spaces)
+    if (formData.major.trim().length === 0) {
+      setError('Major cannot be empty.');
+      return;
+    }
+    
+    // --- VALIDATION END ---
+
     try {
       const response = await fetch(`http://localhost:5000/api/students/${id}`, {
         method: 'PUT',

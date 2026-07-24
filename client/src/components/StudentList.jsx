@@ -5,6 +5,7 @@ const StudentList = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // 1. handleDelete is placed OUTSIDE of useEffect so the JSX buttons can access it
   const handleDelete = async (id) => {
@@ -47,6 +48,13 @@ const StudentList = () => {
     fetchStudents();
   }, []);
 
+  // Filter students based on the search term
+  const filteredStudents = students.filter(student => 
+    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.major.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return <div className="text-center mt-10 font-semibold">Loading students...</div>;
   }
@@ -69,6 +77,16 @@ const StudentList = () => {
         >
           Add Student
         </Link>
+      </div>
+      
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search by name, student ID, or major..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
       {students.length === 0 ? (
@@ -96,7 +114,7 @@ const StudentList = () => {
               </tr>
             </thead>
             <tbody>
-              {students.map((student) => (
+              {filteredStudents.map((student) => (
                 <tr key={student._id}>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <p className="text-gray-900 font-medium">{student.name}</p>
